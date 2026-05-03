@@ -27,3 +27,4 @@ def get_chat_detail(chat_id: str):
         
     # Otherwise, return the chat details to the frontend
     return chat
+
