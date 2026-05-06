@@ -91,3 +91,29 @@ def get_chat_with_qa(chat_id: str):
         "qa_refs": [str(ref) for ref in chat.get("qa_refs", [])],
         "qa_pairs": qa_list # The fully loaded messages
     }
+
+# Function to delete a chat and all its associated Q&A pairs
+def delete_chat(chat_id: str):
+    try:
+        # 1. Delete all Q&A pairs that belong to this chat
+        qa_collection.delete_many({"chat_id": ObjectId(chat_id)})
+        
+        # 2. Delete the parent chat document itself
+        result = chats_collection.delete_one({"_id": ObjectId(chat_id)})
+        
+        # Return true if a chat was actually deleted
+        return result.deleted_count > 0
+    except Exception as e:
+        # Catch invalid ObjectIds or database errors
+        return False
+
+# Function to rename a chat
+def update_chat_title(chat_id: str, new_title: str):
+    try:
+        result = chats_collection.update_one(
+            {"_id": ObjectId(chat_id)},
+            {"$set": {"title": new_title}}
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        return False

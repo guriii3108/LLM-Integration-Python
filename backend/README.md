@@ -27,6 +27,7 @@ This file contains the queries that speak to MongoDB:
 - `add_qa_to_chat()`: Inserts the new Q&A pair into `qa_collection`, and then updates the `chats_collection` by adding the new QA ID into its `qa_refs` array.
 - `get_all_chats()`: Fetches all chat sessions, sorted by newest first.
 - `get_chat_with_qa()`: Fetches a specific chat session AND uses the `chat_id` to query `qa_collection` for all the questions and answers that belong to it.
+- `delete_chat()`: Deletes both the parent chat document and all of its associated Q&A pairs from the database to prevent orphaned records.
 
 ### 5. Data Validation: `models/schema.py`
 FastAPI uses **Pydantic** to make sure incoming data is correct.
@@ -35,7 +36,7 @@ FastAPI uses **Pydantic** to make sure incoming data is correct.
 
 ### 6. External APIs: `services/llm_service.py`
 - Connects to **Groq**.
-- The `get_llm_response()` function takes the user's question, sends it to the `llama3-8b-8192` model, and returns the generated text answer.
+- The `get_llm_response()` function takes the user's question, sends it to the modern `llama-3.1-8b-instant` model, and returns the generated text answer.
 
 ### 7. Core Logic: `services/chat_service.py`
 This is the "Brain" linking the LLM and the DB. 
@@ -48,6 +49,7 @@ These are the API endpoints exposed to the internet.
 - `POST /chat`: Receives the user question, calls the `chat_service`, and returns the LLM's answer.
 - `GET /history`: Returns a list of all chats.
 - `GET /history/{chat_id}`: Returns a specific chat with all of its Q&A history fully loaded.
+- `DELETE /history/{chat_id}`: Deletes a specific chat session and all its messages.
 
 ---
 
@@ -65,39 +67,7 @@ These are the API endpoints exposed to the internet.
 
 ---
 
-## 🎨 Next Steps: Frontend Checklist
+## ✅ Frontend Integration Complete
 
-Now that you understand the backend, here is what you need to code in the frontend HTML/JS files:
-
-### Step 1: `frontend/index.html` & `frontend/style.css`
-- **What to write**: Build a beautiful chat interface with an input box, a send button, and a large div where messages will appear. Add CSS to differentiate user messages vs AI messages.
-
-### Step 2: `frontend/script.js` (Sending a Message)
-- **What to write**:
-  - Add an event listener to the "Send" button.
-  - Grab the text from the input field.
-  - Make a `fetch()` request:
-    ```javascript
-    let currentChatId = null; // Store this globally
-
-    const response = await fetch("http://127.0.0.1:8000/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: questionText, chat_id: currentChatId })
-    });
-    const data = await response.json();
-    
-    // Save the chat_id so the next question goes to the same conversation!
-    currentChatId = data.chat_id; 
-    ```
-  - Append `questionText` and `data.answer` to the DOM.
-
-### Step 3: `frontend/history.html`
-- **What to write**: Create a sidebar to list past chats, and a main reading area to view the old questions and answers.
-
-### Step 4: `frontend/script.js` (Loading History)
-- **What to write**:
-  - Make a `fetch("http://127.0.0.1:8000/history")` request when the page loads.
-  - Loop through the data and create clickable `<li>` items for each chat session.
-  - When a user clicks a chat, make a `fetch("http://127.0.0.1:8000/history/" + clickedChatId)` request.
-  - Loop through the `qa_pairs` inside the response and print them out to the screen.
+The frontend has been completely built and integrated using **Vanilla HTML/JS** and **Tailwind CSS v4**. 
+You can find the entire frontend UI implementation inside the `frontend/` directory, complete with its own dedicated `README.md` detailing the architecture, state management, and sequence flows.

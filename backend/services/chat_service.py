@@ -8,8 +8,8 @@ def process_chat(question: str, chat_id: str = None):
     # Step 1: Send the question to Groq and get the AI's answer
     answer = get_llm_response(question)
     
-    # Step 2: Check if this is a brand new conversation (no chat_id provided)
-    if not chat_id:
+    # Step 2: Check if this is a brand new conversation (no chat_id provided or default swagger value)
+    if not chat_id or chat_id == "string":
         # Create a title using the first 30 characters of the question
         title = question[:30] + "..." if len(question) > 30 else question
         # Save a new chat session to the database and get its new ID

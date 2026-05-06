@@ -12,6 +12,10 @@ class ChatRequest(BaseModel):
     # The actual question text typed by the user
     question: str
 
+# Schema for renaming a chat
+class ChatUpdateRequest(BaseModel):
+    title: str
+
 # Schema representing a single Question and Answer pair
 class QAPairResponse(BaseModel):
     # Unique ID of the Q&A pair in the database

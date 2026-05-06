@@ -1,7 +1,8 @@
 # Import APIRouter and HTTPException for error handling
 from fastapi import APIRouter, HTTPException
 # Import our database query functions
-from db.crud import get_all_chats, get_chat_with_qa
+from db.crud import get_all_chats, get_chat_with_qa, delete_chat, update_chat_title
+from models.schema import ChatUpdateRequest
 
 # Initialize the router for history-related endpoints
 router = APIRouter()
@@ -27,4 +28,25 @@ def get_chat_detail(chat_id: str):
         
     # Otherwise, return the chat details to the frontend
     return chat
+
+# Define a DELETE endpoint to remove a specific chat
+@router.delete("/history/{chat_id}")
+def delete_chat_endpoint(chat_id: str):
+    # Call the database function to delete the chat and its Q&A pairs
+    success = delete_chat(chat_id)
+    
+    if not success:
+        raise HTTPException(status_code=404, detail="Chat not found or already deleted")
+        
+    return {"message": "Chat deleted successfully"}
+
+# Define a PATCH endpoint to rename a chat
+@router.patch("/history/{chat_id}")
+def rename_chat(chat_id: str, req: ChatUpdateRequest):
+    success = update_chat_title(chat_id, req.title)
+    
+    if not success:
+        raise HTTPException(status_code=404, detail="Chat not found or title unchanged")
+        
+    return {"message": "Chat renamed successfully"}
 

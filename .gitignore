@@ -27,3 +27,5 @@ __pycache__/
 # 📦 Logs and Databases
 *.log
 *.sqlite3
+
+node_modules/

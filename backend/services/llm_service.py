@@ -11,8 +11,8 @@ def get_llm_response(question: str) -> str:
     try:
         # Call the Groq chat completions API
         response = client.chat.completions.create(
-            # Specify the specific AI model to use (Llama 3 8B)
-            model="llama3-8b-8192",
+            # Specify the specific AI model to use (Updated to llama-3.1-8b-instant since older one was decommissioned)
+            model="llama-3.1-8b-instant",
             # Pass the user's question inside the messages array
             messages=[
                 {"role": "user", "content": question}
